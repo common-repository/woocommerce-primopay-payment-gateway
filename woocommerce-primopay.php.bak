@@ -1,0 +1,271 @@
+<?php
+/*
+Plugin Name: WooCommerce - PrimoPay Gateway for WooCommerce
+Plugin URI: http://primopay.com.au
+Description: PrimoPay gateway for WooCommerce.
+Version: 1.0
+Author: PrimoPay
+Author URI: http://primopay.com.au
+ 
+
+*/
+ 
+add_action('plugins_loaded', 'woocommerce_primopay_init', 0);
+
+
+ 
+function woocommerce_primopay_init() {
+ 
+	if ( !class_exists( 'WC_Payment_Gateway' ) ) return;
+ 
+	/**
+ 	 * Localisation
+	 */
+	load_plugin_textdomain('wc-gateway-name', false, dirname( plugin_basename( __FILE__ ) ) . '/languages');
+	
+	
+
+ 	// Add the Gateway to WooCommerce
+	function woocommerce_add_primopay_gateway($methods) {
+		$methods[] = 'WC_Primopay';
+		return $methods;		
+	}	
+	
+	add_filter('woocommerce_payment_gateways', 'woocommerce_add_primopay_gateway' );    
+	
+	
+	
+	
+	
+	class WC_Primopay extends WC_Payment_Gateway {
+		
+		function __construct(){
+			$this->id = 'primopay';
+			//$this->icon = "http://www.primopay.com.au/wp-content/uploads/2013/09/primopayemaillogo1.jpg";
+			$this->has_fields = true;
+			$this->method_title = "PrimoPay";
+			$this->method_description	= "Australian payment gateway using CTEL technology.";
+			
+			$this->init_form_fields();
+			$this->init_settings();
+			
+			$this->enabled = $this->get_option( 'enabled' );
+			$this->title = $this->get_option( 'title' );
+			$this->description = $this->get_option( 'description' );
+			$this->mode = $this->get_option( 'mode' );
+			$this->location = $this->get_option( 'location' );
+			
+			add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
+
+		}
+		
+
+		
+		function init_form_fields(){
+			$this->form_fields = array(
+				'enabled' => array(
+					'title' => __( 'Enable/Disable', 'woocommerce' ),
+					'type' => 'checkbox',
+					'label' => __( 'Enable PrimoPay', 'woocommerce' ),
+					'default' => 'yes'
+				),
+				'title' => array(
+					'title' => __( 'Title', 'woocommerce' ),
+					'type' => 'text',
+					'description' => __( 'This controls the title which the user sees during checkout.', 'woocommerce' ),
+					'default' => __( 'Pay via Credit Card (PrimoPay)', 'woocommerce' ),
+					'desc_tip'      => true,
+				),
+				'mode' => array(
+					'title' 		=> __( 'Mode', 'woocommerce' ),
+					'type' 			=> 'select',
+					'default'		=> 'test',
+					'description' 	=> __( 'Set this to live when you are ready to accept real payments.', 'woocommerce' ),
+					'options'		=> Array('test'=>'Test mode','live'=>'Live Mode'),
+					'desc_tip'      => true,
+				),
+				'location' => array(
+					'title' 		=> __( 'Servers to use first', 'woocommerce' ),
+					'type' 			=> 'select',
+					'default'		=> 'east',
+					'description' 	=> __( 'Set this to your website server\'s closet city', 'woocommerce' ),
+					'options'		=> Array('east'=>'Sydney','west'=>'Adelaide'),
+					'desc_tip'      => true,
+				),
+				'ctelid' => array(
+					'title' => __( '6 digit account ID', 'woocommerce' ),
+					'type' => 'text',
+					'default' => __( '', 'woocommerce' ),
+				),
+				'username' => array(
+					'title' => __( 'Transaction username', 'woocommerce' ),
+					'type' => 'text',
+					'default' => __( '', 'woocommerce' ),
+				),
+				'password' => array(
+					'title' => __( 'Transaction Password', 'woocommerce' ),
+					'type' => 'password',
+					'default' => __( '', 'woocommerce' ),
+				),
+			);
+			
+		}
+		
+		public function admin_options() {
+    	?>
+    	<h3><?php _e( 'PrimoPay', 'woocommerce' ); ?></h3>
+    	<p><?php _e('Allows payments from customers using PrimoPay.', 'woocommerce' ); ?></p>
+    	<table class="form-table">
+    	<?php
+    		// Generate the HTML For the settings form.
+    		$this->generate_settings_html();
+    	?>
+		</table><!--/.form-table-->
+    	<?php
+    }
+    
+    
+		
+		function payment_fields(){
+			$this->payment_fields = array(
+				'cardname' => array(
+					'title' => __( 'Name on Card', 'woocommerce' ),
+					'type' => 'text',
+					'description' => __( 'The name on the credit card', 'woocommerce' ),
+					'default' => __( '', 'woocommerce' ),
+					'desc_tip'      => true,
+				),
+				'cardnumber' => array(
+					'title' => __( 'Card Number', 'woocommerce' ),
+					'type' => 'text',
+					'default' => __( '', 'woocommerce' ),
+				),	
+							
+				);
+				
+	
+				$cardname = sanitize_text_field($_POST['cardname']);
+				$cardnum = sanitize_text_field($_POST['cardnum']);
+				$expmonth = sanitize_text_field($_POST['expmonth']);
+				$expyear = sanitize_text_field($_POST['expyear']);
+				$cvv = sanitize_text_field($_POST['cvv']);
+				
+				// Cacl the expiry month
+				for($i=1; $i<=12; $i++){
+					$monthname = date("F",mktime(0, 0, 0, $i, 10));
+					
+					$sel = "";
+					if($expmonth == $i) $sel = "selected";
+					
+					$expmonth .= "<option value=$i $sel>$monthname</option>";
+				}
+				$expmonth = "<select name=expmonth class='primpay expmonth' >$expmonth</select>";
+				
+				for($i=0; $i<=8; $i++){
+					$year = date("Y")+$i;
+					
+					$sel = "";
+					if($expyear == $i) $sel = "selected";
+					
+					$expyear .= "<option value=$year $sel>$year</option>";
+				}
+				$expyear = "<select name=expyear class='primpay expyear' >$expyear</select>";
+				
+				echo "<script language='javascript' type='text/javascript'>
+								function removeSpaces(string) {
+								 return string.split(' ').join('');
+								}
+								</script>";
+				
+				echo "<br><label for='cardname'>Cardname</label><input class='primpay cardname' type=input name='cardname' value='$cardname'>";
+				echo "<br><label for='cardnum'>Card Number</label><input class='primpay cardnum'  type=input name='cardnum' value='$cardnum' onkeyup='this.value=removeSpaces(this.value);' maxlength=16>";
+				echo "<br>Expiry: $expmonth $expyear";
+				echo "<br><label for='cvv'>CVV</label><input class='primpay css'  type=input name='cvv' value='$cvv'>";
+			
+			
+		}
+		
+		function validate_fields(){
+			global $woocommerce;
+			
+			$valid = true;
+			
+			$cardname = sanitize_text_field($_POST['cardname']);
+			$cardnum = sanitize_text_field($_POST['cardnum']);
+			$expmonth = str_pad(sanitize_text_field($_POST['expmonth']),2,"0",STR_PAD_LEFT);
+			$expyear = sanitize_text_field($_POST['expyear']);
+			$cvv = sanitize_text_field($_POST['cvv']);			
+			
+			if(strlen($cardname)<2){
+				$error_message = "Card name must be entered";
+				$woocommerce->add_error(__('Credit Card Details Error: ', 'woothemes') . $error_message);
+				$valid = false;
+			}
+			
+			if(strlen($cardnum)!=16){
+				$error_message = "Card number must be 16 digits";
+				$woocommerce->add_error(__('Credit Card Details Error: ', 'woothemes') . $error_message);
+				$valid = false;
+			}
+			
+			$now = date("Ym");
+			if(($expyear.$expmonth)<$now){
+				$error_message = "Expiry date ".($expyear.$expmonth)." must be in the future";
+				$woocommerce->add_error(__('Credit Card Details Error: ', 'woothemes') . $error_message);
+				$valid = false;				
+			}
+						
+			if(strlen($cvv)!=3){
+				$error_message = "CVV must be 3 digits";
+				$woocommerce->add_error(__('Credit Card Details Error: ', 'woothemes') . $error_message);
+				$valid = false;
+			}
+			
+			
+			return $valid;
+		}
+		
+		
+		function process_payment( $order_id ) {
+			global $woocommerce;
+			$order = new WC_Order( $order_id );
+			
+			$cardname = sanitize_text_field($_POST['cardname']);
+			$cardnum = sanitize_text_field($_POST['cardnum']);
+			$expmonth = str_pad(sanitize_text_field($_POST['expmonth']),2,"0",STR_PAD_LEFT);
+			$expyear = sanitize_text_field($_POST['expyear']);
+			$cvv = sanitize_text_field($_POST['cvv']);	
+		
+			// Mark as on-hold (we're awaiting the cheque)
+			
+			// USe for bank errors
+			$order->update_status('on-hold', __( 'Awaiting cheque payment', 'woocommerce' ));
+			// $order->payment_complete();
+		
+			// Reduce stock levels
+			$order->reduce_order_stock();
+		
+			// Remove cart
+			$woocommerce->cart->empty_cart();
+		
+		
+			if($pp_success){	
+			// Return thankyou redirect
+				return array(
+					'result' => 'success',
+					'redirect' => $this->get_return_url( $order )
+				);
+			} else {
+				$woocommerce->add_error(__('Payment error:', 'woothemes') . $error_message);
+				return;				
+			}
+			
+			
+			
+			
+		}
+		
+	}
+	
+
+} 

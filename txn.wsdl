@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="Ctel Pty Ltd" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" targetNamespace="Ctel Pty Ltd" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="Ctel Pty Ltd">
+      <s:element name="PerformCreditCardTxn">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Merchant" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="OperatorUsername" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="OperatorPassword" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="TxnType" type="tns:TransactionTypes" />
+            <s:element minOccurs="0" maxOccurs="1" name="CustomerReference" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="CardNumber" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="CardExpiry" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="CardCVV" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="CardHolderName" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Amount" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="AuthorisationNumber" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="ECI" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="CtelTechnology" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:simpleType name="TransactionTypes">
+        <s:restriction base="s:string">
+          <s:enumeration value="Payment" />
+          <s:enumeration value="Refund" />
+          <s:enumeration value="PreAuthorisation" />
+          <s:enumeration value="Completion" />
+          <s:enumeration value="Void" />
+          <s:enumeration value="Credit" />
+          <s:enumeration value="RefferalApproval" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="PerformCreditCardTxnResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="PerformCreditCardTxnResult" type="tns:CreditCardTxnResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="CreditCardTxnResult">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Successful" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="Receipt" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ResponseCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ResponseDescription" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="BankReferenceNumber" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="BankSettlementDate" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="AuthorisationNumber" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="PerformInternationalCreditCardTxn">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Merchant" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="OperatorUsername" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="OperatorPassword" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="TxnType" type="tns:TransactionTypes" />
+            <s:element minOccurs="0" maxOccurs="1" name="CustomerReference" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="CardNumber" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="CardExpiry" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="CardCVV" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="CardHolderName" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Amount" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="AuthorisationNumber" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="ECI" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="CtelTechnology" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="ApprovalCode" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="DynamicDescriptor" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="AvsAddress" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="AvsZip" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="PerformInternationalCreditCardTxnResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="PerformInternationalCreditCardTxnResult" type="tns:CreditCardTxnResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="PerformTokenBasedTxn">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Merchant" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="OperatorUsername" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="OperatorPassword" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Token" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="TxnType" type="tns:TransactionTypes" />
+            <s:element minOccurs="0" maxOccurs="1" name="CustomerReference" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="CardCVV" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="CardHolderName" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="Amount" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="AuthorisationNumber" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="ECI" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="CtelTechnology" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="ApprovalCode" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="DynamicDescriptor" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="AvsAddress" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="AvsZip" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="PerformTokenBasedTxnResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="PerformTokenBasedTxnResult" type="tns:CreditCardTxnResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SaveToken">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Merchant" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="OperatorUsername" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="OperatorPassword" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="SaveTokenType" type="tns:SaveTokenTypes" />
+            <s:element minOccurs="0" maxOccurs="1" name="Token" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="TokenReference" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="CardNumber" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="CardExpiry" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:simpleType name="SaveTokenTypes">
+        <s:restriction base="s:string">
+          <s:enumeration value="Add" />
+          <s:enumeration value="Update" />
+          <s:enumeration value="Delete" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="SaveTokenResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SaveTokenResult" type="tns:TokenResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="TokenResult">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Successful" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="Token" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="TokenReference" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ResponseCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ResponseDescription" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PartialCardNumber" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="CardExpiry" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="PerformCreditCardTxnSoapIn">
+    <wsdl:part name="parameters" element="tns:PerformCreditCardTxn" />
+  </wsdl:message>
+  <wsdl:message name="PerformCreditCardTxnSoapOut">
+    <wsdl:part name="parameters" element="tns:PerformCreditCardTxnResponse" />
+  </wsdl:message>
+  <wsdl:message name="PerformInternationalCreditCardTxnSoapIn">
+    <wsdl:part name="parameters" element="tns:PerformInternationalCreditCardTxn" />
+  </wsdl:message>
+  <wsdl:message name="PerformInternationalCreditCardTxnSoapOut">
+    <wsdl:part name="parameters" element="tns:PerformInternationalCreditCardTxnResponse" />
+  </wsdl:message>
+  <wsdl:message name="PerformTokenBasedTxnSoapIn">
+    <wsdl:part name="parameters" element="tns:PerformTokenBasedTxn" />
+  </wsdl:message>
+  <wsdl:message name="PerformTokenBasedTxnSoapOut">
+    <wsdl:part name="parameters" element="tns:PerformTokenBasedTxnResponse" />
+  </wsdl:message>
+  <wsdl:message name="SaveTokenSoapIn">
+    <wsdl:part name="parameters" element="tns:SaveToken" />
+  </wsdl:message>
+  <wsdl:message name="SaveTokenSoapOut">
+    <wsdl:part name="parameters" element="tns:SaveTokenResponse" />
+  </wsdl:message>
+  <wsdl:portType name="TxnSoap">
+    <wsdl:operation name="PerformCreditCardTxn">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">This method allows you to perform a credit card transaction.</wsdl:documentation>
+      <wsdl:input message="tns:PerformCreditCardTxnSoapIn" />
+      <wsdl:output message="tns:PerformCreditCardTxnSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="PerformInternationalCreditCardTxn">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">This method allows you to perform a credit card transaction.</wsdl:documentation>
+      <wsdl:input message="tns:PerformInternationalCreditCardTxnSoapIn" />
+      <wsdl:output message="tns:PerformInternationalCreditCardTxnSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="PerformTokenBasedTxn">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">This method allows you to perform a credit card transaction with a token</wsdl:documentation>
+      <wsdl:input message="tns:PerformTokenBasedTxnSoapIn" />
+      <wsdl:output message="tns:PerformTokenBasedTxnSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SaveToken">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">This method allows you to save a token for a particular credit card number</wsdl:documentation>
+      <wsdl:input message="tns:SaveTokenSoapIn" />
+      <wsdl:output message="tns:SaveTokenSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="TxnSoap" type="tns:TxnSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="PerformCreditCardTxn">
+      <soap:operation soapAction="Ctel Pty Ltd/PerformCreditCardTxn" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PerformInternationalCreditCardTxn">
+      <soap:operation soapAction="Ctel Pty Ltd/PerformInternationalCreditCardTxn" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PerformTokenBasedTxn">
+      <soap:operation soapAction="Ctel Pty Ltd/PerformTokenBasedTxn" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SaveToken">
+      <soap:operation soapAction="Ctel Pty Ltd/SaveToken" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="TxnSoap12" type="tns:TxnSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="PerformCreditCardTxn">
+      <soap12:operation soapAction="Ctel Pty Ltd/PerformCreditCardTxn" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PerformInternationalCreditCardTxn">
+      <soap12:operation soapAction="Ctel Pty Ltd/PerformInternationalCreditCardTxn" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PerformTokenBasedTxn">
+      <soap12:operation soapAction="Ctel Pty Ltd/PerformTokenBasedTxn" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SaveToken">
+      <soap12:operation soapAction="Ctel Pty Ltd/SaveToken" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="Txn">
+    <wsdl:port name="TxnSoap" binding="tns:TxnSoap">
+      <soap:address location="https://ccdemo.gw01.ctel.com.au/txn.asmx" />
+    </wsdl:port>
+    <wsdl:port name="TxnSoap12" binding="tns:TxnSoap12">
+      <soap12:address location="https://ccdemo.gw01.ctel.com.au/txn.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
